@@ -19,44 +19,44 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "workspace",
-    "reads_library_name"
+    "workspace_name",
+    "read_library_name"
 })
 public class FastqUtilsStatsParams {
 
-    @JsonProperty("workspace")
-    private String workspace;
-    @JsonProperty("reads_library_name")
-    private String readsLibraryName;
+    @JsonProperty("workspace_name")
+    private String workspaceName;
+    @JsonProperty("read_library_name")
+    private String readLibraryName;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("workspace")
-    public String getWorkspace() {
-        return workspace;
+    @JsonProperty("workspace_name")
+    public String getWorkspaceName() {
+        return workspaceName;
     }
 
-    @JsonProperty("workspace")
-    public void setWorkspace(String workspace) {
-        this.workspace = workspace;
+    @JsonProperty("workspace_name")
+    public void setWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
     }
 
-    public FastqUtilsStatsParams withWorkspace(String workspace) {
-        this.workspace = workspace;
+    public FastqUtilsStatsParams withWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
         return this;
     }
 
-    @JsonProperty("reads_library_name")
-    public String getReadsLibraryName() {
-        return readsLibraryName;
+    @JsonProperty("read_library_name")
+    public String getReadLibraryName() {
+        return readLibraryName;
     }
 
-    @JsonProperty("reads_library_name")
-    public void setReadsLibraryName(String readsLibraryName) {
-        this.readsLibraryName = readsLibraryName;
+    @JsonProperty("read_library_name")
+    public void setReadLibraryName(String readLibraryName) {
+        this.readLibraryName = readLibraryName;
     }
 
-    public FastqUtilsStatsParams withReadsLibraryName(String readsLibraryName) {
-        this.readsLibraryName = readsLibraryName;
+    public FastqUtilsStatsParams withReadLibraryName(String readLibraryName) {
+        this.readLibraryName = readLibraryName;
         return this;
     }
 
@@ -72,7 +72,7 @@ public class FastqUtilsStatsParams {
 
     @Override
     public String toString() {
-        return ((((((("FastqUtilsStatsParams"+" [workspace=")+ workspace)+", readsLibraryName=")+ readsLibraryName)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("FastqUtilsStatsParams"+" [workspaceName=")+ workspaceName)+", readLibraryName=")+ readLibraryName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

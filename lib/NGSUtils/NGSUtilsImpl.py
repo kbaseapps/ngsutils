@@ -242,4 +242,3 @@ class NGSUtils:
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
-

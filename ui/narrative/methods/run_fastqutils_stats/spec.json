@@ -30,7 +30,7 @@
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
-                    "target_property": "workspace"
+                    "target_property": "workspace_name"
                 },
                 {
                     "input_parameter": "read_library_name",

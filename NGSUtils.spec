@@ -9,7 +9,7 @@ module NGSUtils {
     typedef string workspace_name;
 
     typedef structure {
-        workspace_name workspace;
+        workspace_name workspace_name;
         read_library_name read_library_name;
     } FastqUtilsStatsParams;
 
