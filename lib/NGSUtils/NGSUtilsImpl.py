@@ -196,7 +196,7 @@ class NGSUtils:
                         stderr = subprocess.STDOUT, shell = False)
 
             while True:
-                line = p.stdout.readline()
+                line = p.stdout.readline().decode('utf-8')
                 if not line: break
                 report += line
                 print(line.replace('\n', ''))
