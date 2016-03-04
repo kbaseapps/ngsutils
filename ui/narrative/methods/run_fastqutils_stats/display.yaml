@@ -1,0 +1,37 @@
+#
+# define display information
+#
+name: Compute Read Library Stats
+tooltip: |
+    Run NGSUtils command 'fastqutils stats' to compute read library stats
+screenshots: []
+
+icon: null
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    read_library_name :
+        ui-name : |
+            Read Library
+        short-hint : |
+            The read library (Single or Paired end) to analyze
+
+description : |
+    <p>Run NGSUtils command 'fastqutils stats' to compute read library stats.</p>
