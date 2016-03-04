@@ -2,7 +2,9 @@ module-name:
     NGSUtils
 
 module-description:
-    A KBase module
+    A KBase wrapper of http://ngsutils.org
+
+    Currently, the only supported method is fastqutils stats
 
 service-language:
     python
