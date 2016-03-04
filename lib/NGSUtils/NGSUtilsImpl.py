@@ -100,18 +100,23 @@ class NGSUtils:
         #### Download the paired end library
         if type_name == 'PairedEndLibrary':
             try:
+                fr_type = ''
                 if 'lib1' in data:
                     forward_reads = data['lib1']['file']
+                    # type is required if lib1 is present
+                    fr_type = '.' + data['lib1']['type']
                 elif 'handle_1' in data:
                     forward_reads = data['handle_1']
                 if 'lib2' in data:
                     reverse_reads = data['lib2']['file']
+                    # type is required if lib2 is present
+                    rv_type = '.' + data['lib2']['type']
                 elif 'handle_2' in data:
                     reverse_reads = data['handle_2']
                 else:
                     reverse_reads={}
 
-                fr_file_name = forward_reads['id']
+                fr_file_name = forward_reads['id'] + fr_type
                 if 'file_name' in forward_reads:
                     fr_file_name = forward_reads['file_name']
                 
@@ -133,7 +138,7 @@ class NGSUtils:
                     pass
                 else:
                     # we need to read in reverse reads file separately
-                    rev_file_name = reverse_reads['id']
+                    rev_file_name = reverse_reads['id'] + rv_type
                     if 'file_name' in reverse_reads:
                         rev_file_name = reverse_reads['file_name']
                     ### NOTE: this section is what could also be replaced by the transform services
@@ -196,7 +201,7 @@ class NGSUtils:
                         stderr = subprocess.STDOUT, shell = False)
 
             while True:
-                line = p.stdout.readline().decode('utf-8')
+                line = p.stdout.readline()
                 if not line: break
                 report += line
                 print(line.replace('\n', ''))
