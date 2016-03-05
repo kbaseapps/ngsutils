@@ -2,15 +2,14 @@ module-name:
     NGSUtils
 
 module-description:
-    A KBase wrapper of http://ngsutils.org
-
-    Currently, the only supported method is fastqutils stats
+    <p> This Module wraps methods from the <a href="http://ngsutils.org">NGSUtils</a> package 
+    developed by the Liu Lab at the Indiana University School of Medicine.</p>
 
 service-language:
     python
 
 module-version:
-    0.0.1
+    1.0.0
 
 owners:
     [msneddon, psdehal]

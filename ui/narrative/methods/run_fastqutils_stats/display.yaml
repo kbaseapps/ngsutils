@@ -1,12 +1,12 @@
 #
 # define display information
 #
-name: Compute Read Library Stats
+name: Compute Simple Read Library Stats
 tooltip: |
-    Run NGSUtils command 'fastqutils stats' to compute read library stats
+    Run the NGSUtils command 'fastqutils stats' to compute read library summary stats
 screenshots: []
 
-icon: null
+icon: kb-orange.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -34,4 +34,24 @@ parameters :
             The read library (Single or Paired end) to analyze
 
 description : |
-    <p>Run NGSUtils command 'fastqutils stats' to compute read library stats.</p>
+    <p> This App computes simple read library summary statistics (for both Paired End and Single End libraries)
+    using the <a href="http://ngsutils.org/modules/fastqutils/stats">fastqutils stats</a> command of the
+    <a href="http://ngsutils.org">NGSUtils</a> package developed by the Liu Lab at the Indiana University School
+    of Medicine</p>
+
+    <p> Statistics are displayed in a KBase Narrative as a simple text Report</a>
+
+    <p> Summary information includes the distributions of read lengths, average quality by base position,
+    if the file is in colorspace, and what encoding is used for quality values (Sanger or Illumina). </p>
+
+
+publications :
+    -
+        pmid: 23314324
+        display-text : |
+            'Marcus R. Breese and Yunlong Liu. (2013) NGSUtils: a software suite for analyzing and manipulating next-generation sequencing datasets. Bioinformatics 29(4): 494-496'
+        link: http://www.ncbi.nlm.nih.gov/pubmed/23314324
+    -
+        link: http://ngsutils.org
+
+

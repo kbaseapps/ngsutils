@@ -1,10 +1,10 @@
 {
-    "ver": "0.0.1",
+    "ver": "1.0.0",
     "authors": [
-        "msneddon"
+        "msneddon","psdehal"
     ],
     "contact": "help@kbase.us",
-    "categories": ["active"],
+    "categories": ["active","util"],
     "widgets": {
         "input": null,
         "output": "no-display"
