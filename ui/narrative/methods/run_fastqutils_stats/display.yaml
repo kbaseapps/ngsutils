@@ -49,9 +49,10 @@ publications :
     -
         pmid: 23314324
         display-text : |
-            'Marcus R. Breese and Yunlong Liu. (2013) NGSUtils: a software suite for analyzing and manipulating next-generation sequencing datasets. Bioinformatics 29(4): 494-496'
+            Marcus R. Breese and Yunlong Liu. (2013) NGSUtils: a software suite for analyzing and manipulating next-generation sequencing datasets. Bioinformatics 29(4): 494-496
         link: http://www.ncbi.nlm.nih.gov/pubmed/23314324
     -
+        display-text : NGSUtils 
         link: http://ngsutils.org
 
 
