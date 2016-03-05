@@ -101,6 +101,7 @@ class NGSUtils:
         if type_name == 'PairedEndLibrary':
             try:
                 fr_type = ''
+                rv_type = ''
                 if 'lib1' in data:
                     forward_reads = data['lib1']['file']
                     # type is required if lib1 is present
