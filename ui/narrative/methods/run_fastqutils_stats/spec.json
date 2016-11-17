@@ -4,14 +4,14 @@
         "msneddon","psdehal"
     ],
     "contact": "help@kbase.us",
-    "categories": ["active","util"],
+    "categories": ["active","reads"],
     "widgets": {
         "input": null,
         "output": "no-display"
     },
     "parameters": [ 
         {
-            "id": "read_library_name",
+            "id": "read_library_ref",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
@@ -33,8 +33,9 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "read_library_name",
-                    "target_property": "read_library_name"
+                    "input_parameter": "read_library_ref",
+                    "target_property": "read_library_ref",
+                    "target_type_transform": "resolved-ref"
                 }
             ],
             "output_mapping": [

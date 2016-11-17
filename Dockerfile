@@ -1,16 +1,9 @@
 FROM kbase/kbase:sdkbase.latest
 MAINTAINER KBase Developer
-# -----------------------------------------
-
-# Insert apt-get instructions here to install
-# any required dependencies for your module.
-
-# RUN apt-get update
-
-# -----------------------------------------
-
 
 WORKDIR /kb/module
+
+RUN pip install --upgrade ndg-httpsclient
 
 # Install ngsutils
 RUN \

@@ -124,9 +124,9 @@ $params is a NGSUtils.FastqUtilsStatsParams
 $return is a NGSUtils.FastqUtilsStatsResult
 FastqUtilsStatsParams is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a NGSUtils.workspace_name
-	read_library_name has a value which is a NGSUtils.read_library_name
+	read_library_ref has a value which is a NGSUtils.read_library_ref
 workspace_name is a string
-read_library_name is a string
+read_library_ref is a string
 FastqUtilsStatsResult is a reference to a hash where the following keys are defined:
 	report_name has a value which is a string
 	report_ref has a value which is a string
@@ -141,9 +141,9 @@ $params is a NGSUtils.FastqUtilsStatsParams
 $return is a NGSUtils.FastqUtilsStatsResult
 FastqUtilsStatsParams is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a NGSUtils.workspace_name
-	read_library_name has a value which is a NGSUtils.read_library_name
+	read_library_ref has a value which is a NGSUtils.read_library_ref
 workspace_name is a string
-read_library_name is a string
+read_library_ref is a string
 FastqUtilsStatsResult is a reference to a hash where the following keys are defined:
 	report_name has a value which is a string
 	report_ref has a value which is a string
@@ -182,9 +182,10 @@ FastqUtilsStatsResult is a reference to a hash where the following keys are defi
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "NGSUtils.fastqutils_stats",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "NGSUtils.fastqutils_stats",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -205,6 +206,36 @@ FastqUtilsStatsResult is a reference to a hash where the following keys are defi
 }
  
   
+sub status
+{
+    my($self, @args) = @_;
+    if ((my $n = @args) != 0) {
+        Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+                                   "Invalid argument count for function status (received $n, expecting 0)");
+    }
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+        method => "NGSUtils.status",
+        params => \@args,
+    });
+    if ($result) {
+        if ($result->is_error) {
+            Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+                           code => $result->content->{error}->{code},
+                           method_name => 'status',
+                           data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+                          );
+        } else {
+            return wantarray ? @{$result->result} : $result->result->[0];
+        }
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method status",
+                        status_line => $self->{client}->status_line,
+                        method_name => 'status',
+                       );
+    }
+}
+   
 
 sub version {
     my ($self) = @_;
@@ -263,7 +294,7 @@ sub _validate_version {
 
 
 
-=head2 read_library_name
+=head2 read_library_ref
 
 =over 4
 
@@ -338,7 +369,7 @@ a string
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a NGSUtils.workspace_name
-read_library_name has a value which is a NGSUtils.read_library_name
+read_library_ref has a value which is a NGSUtils.read_library_ref
 
 </pre>
 
@@ -348,7 +379,7 @@ read_library_name has a value which is a NGSUtils.read_library_name
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a NGSUtils.workspace_name
-read_library_name has a value which is a NGSUtils.read_library_name
+read_library_ref has a value which is a NGSUtils.read_library_ref
 
 
 =end text

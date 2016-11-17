@@ -20,14 +20,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "workspace_name",
-    "read_library_name"
+    "read_library_ref"
 })
 public class FastqUtilsStatsParams {
 
     @JsonProperty("workspace_name")
     private String workspaceName;
-    @JsonProperty("read_library_name")
-    private String readLibraryName;
+    @JsonProperty("read_library_ref")
+    private String readLibraryRef;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("workspace_name")
@@ -45,18 +45,18 @@ public class FastqUtilsStatsParams {
         return this;
     }
 
-    @JsonProperty("read_library_name")
-    public String getReadLibraryName() {
-        return readLibraryName;
+    @JsonProperty("read_library_ref")
+    public String getReadLibraryRef() {
+        return readLibraryRef;
     }
 
-    @JsonProperty("read_library_name")
-    public void setReadLibraryName(String readLibraryName) {
-        this.readLibraryName = readLibraryName;
+    @JsonProperty("read_library_ref")
+    public void setReadLibraryRef(String readLibraryRef) {
+        this.readLibraryRef = readLibraryRef;
     }
 
-    public FastqUtilsStatsParams withReadLibraryName(String readLibraryName) {
-        this.readLibraryName = readLibraryName;
+    public FastqUtilsStatsParams withReadLibraryRef(String readLibraryRef) {
+        this.readLibraryRef = readLibraryRef;
         return this;
     }
 
@@ -72,7 +72,7 @@ public class FastqUtilsStatsParams {
 
     @Override
     public String toString() {
-        return ((((((("FastqUtilsStatsParams"+" [workspaceName=")+ workspaceName)+", readLibraryName=")+ readLibraryName)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("FastqUtilsStatsParams"+" [workspaceName=")+ workspaceName)+", readLibraryRef=")+ readLibraryRef)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

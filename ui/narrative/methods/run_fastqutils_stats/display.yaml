@@ -1,12 +1,12 @@
 #
 # define display information
 #
-name: Compute Simple Read Library Stats
+name: Compute Simple Read Library Stats with NGSUtils
 tooltip: |
     Run the NGSUtils command 'fastqutils stats' to compute read library summary stats
 screenshots: []
 
-icon: kb-orange.png
+icon: ngsutils-pink.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -27,7 +27,7 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    read_library_name :
+    read_library_ref :
         ui-name : |
             Read Library
         short-hint : |

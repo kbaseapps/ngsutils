@@ -1,25 +1,14 @@
+# -*- coding: utf-8 -*-
 #BEGIN_HEADER
 # The header block is where all import statments should live
 import os
-import sys
-import shutil
-import hashlib
 import subprocess
-import requests
-import re
-import traceback
 import uuid
-from datetime import datetime
-from pprint import pprint, pformat
 
-import numpy as np
+from pprint import pformat
 
-from Bio import SeqIO
-
-from biokbase.workspace.client import Workspace as workspaceService
-
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
+from ReadsUtils.ReadsUtilsClient import ReadsUtils
+from KBaseReport.KBaseReportClient import KBaseReport
 #END_HEADER
 
 
@@ -32,12 +21,16 @@ class NGSUtils:
     
     '''
 
-    ######## WARNING FOR GEVENT USERS #######
+    ######## WARNING FOR GEVENT USERS ####### noqa
     # Since asynchronous IO can lead to methods - even the same method -
     # interrupting each other, you must be *very* careful when using global
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
-    #########################################
+    ######################################### noqa
+    VERSION = "1.0.0"
+    GIT_URL = "git@github.com:kbaseapps/ngsutils"
+    GIT_COMMIT_HASH = "8caeed3610b06f829ac93dc2bab61c01b2c84a67"
+
     #BEGIN_CLASS_HEADER
     # Class variables and functions can be defined in this block
     workspaceURL = None
@@ -48,6 +41,7 @@ class NGSUtils:
     # be found
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
+        self.callbackURL = os.environ['SDK_CALLBACK_URL']
         self.workspaceURL = config['workspace-url']
         self.scratch = os.path.abspath(config['scratch'])
         if not os.path.exists(self.scratch):
@@ -55,7 +49,16 @@ class NGSUtils:
         #END_CONSTRUCTOR
         pass
 
+
     def fastqutils_stats(self, ctx, params):
+        """
+        :param params: instance of type "FastqUtilsStatsParams" -> structure:
+           parameter "workspace_name" of type "workspace_name" (A string
+           representing a workspace name.), parameter "read_library_ref" of
+           type "read_library_ref" (A string representing a ContigSet id.)
+        :returns: instance of type "FastqUtilsStatsResult" -> structure:
+           parameter "report_name" of String, parameter "report_ref" of String
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN fastqutils_stats
@@ -63,128 +66,25 @@ class NGSUtils:
         print('Running fastqutils_stats with params=')
         print(pformat(params))
 
-        #### do some basic checks
-        objref = ''
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
-        if 'read_library_name' not in params:
-            raise ValueError('read_library_name parameter is required')
+        if 'read_library_ref' not in params:
+            raise ValueError('read_library_ref parameter is required')
 
-        #### Get the read library
-        try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['read_library_name']}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size 
-            # 10 - usermeta meta
-            type_name = info[2].split('.')[1].split('-')[0]
-        except Exception as e:
-            raise ValueError('Unable to fetch read library object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-
-
-        files = []
-
-        #### Download the paired end library
-        if type_name == 'PairedEndLibrary':
-            try:
-                fr_type = ''
-                rv_type = ''
-                if 'lib1' in data:
-                    forward_reads = data['lib1']['file']
-                    # type is required if lib1 is present
-                    fr_type = '.' + data['lib1']['type']
-                elif 'handle_1' in data:
-                    forward_reads = data['handle_1']
-                if 'lib2' in data:
-                    reverse_reads = data['lib2']['file']
-                    # type is required if lib2 is present
-                    rv_type = '.' + data['lib2']['type']
-                elif 'handle_2' in data:
-                    reverse_reads = data['handle_2']
-                else:
-                    reverse_reads={}
-
-                fr_file_name = forward_reads['id'] + fr_type
-                if 'file_name' in forward_reads:
-                    fr_file_name = forward_reads['file_name']
-                
-                ### NOTE: this section is what could be replaced by the transform services
-                forward_reads_file_location = os.path.join(self.scratch,fr_file_name)
-                forward_reads_file = open(forward_reads_file_location, 'w', 0)
-                print('downloading reads file: '+str(forward_reads_file_location))
-                headers = {'Authorization': 'OAuth '+ctx['token']}
-                r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
-                for chunk in r.iter_content(1024):
-                    forward_reads_file.write(chunk)
-                forward_reads_file.close();
-                print('done')
-                files = [fr_file_name]
-                ### END NOTE
-
-                if 'interleaved' in data and data['interleaved']:
-                    # we don't do any processing on interleaved files
-                    pass
-                else:
-                    # we need to read in reverse reads file separately
-                    rev_file_name = reverse_reads['id'] + rv_type
-                    if 'file_name' in reverse_reads:
-                        rev_file_name = reverse_reads['file_name']
-                    ### NOTE: this section is what could also be replaced by the transform services
-                    reverse_reads_file_location = os.path.join(self.scratch,rev_file_name)
-                    reverse_reads_file = open(reverse_reads_file_location, 'w', 0)
-                    print('downloading reverse reads file: '+str(reverse_reads_file_location))
-                    r = requests.get(reverse_reads['url']+'/node/'+reverse_reads['id']+'?download', stream=True, headers=headers)
-                    for chunk in r.iter_content(1024):
-                        reverse_reads_file.write(chunk)
-                    reverse_reads_file.close()
-                    print('done')
-                    files = [fr_file_name, rev_file_name]
-                    ### END NOTE
-            except Exception as e:
-                print(traceback.format_exc())
-                raise ValueError('Unable to download paired-end read library files: ' + str(e))
-        elif type_name == 'SingleEndLibrary':
-            try:
-                if 'lib' in data:
-                    forward_reads = data['lib']['file']
-                elif 'handle' in data:
-                    forward_reads = data['handle']
-
-                fr_file_name = forward_reads['id']
-                if 'file_name' in forward_reads:
-                    fr_file_name = forward_reads['file_name']
-                
-                ### NOTE: this section is what could be replaced by the transform services
-                forward_reads_file_location = os.path.join(self.scratch,fr_file_name)
-                forward_reads_file = open(forward_reads_file_location, 'w', 0)
-                print('downloading reads file: '+str(forward_reads_file_location))
-                headers = {'Authorization': 'OAuth '+ctx['token']}
-                r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
-                for chunk in r.iter_content(1024):
-                    forward_reads_file.write(chunk)
-                forward_reads_file.close();
-                print('done')
-                files = [fr_file_name]
-                ### END NOTE
-
-            except Exception as e:
-                print(traceback.format_exc())
-                raise ValueError('Unable to download paired-end read library files: ' + str(e)) 
-        else:
-            raise ValueError('Cannot yet handle library type of: '+type_name)
+        # Get the read library as deinterleaved fastq files
+        input_ref = params['read_library_ref']
+        reads_params = {'read_libraries': [input_ref],
+                        'interleaved': 'false',
+                        'gzipped': None
+                        }
+        ru = ReadsUtils(self.callbackURL, token=ctx['token'])
+        reads = ru.download_reads(reads_params)['files']
+        files = [reads[input_ref]['files']['fwd']]
+        if reads[input_ref]['files']['rev']:
+            files.append(reads[input_ref]['files']['rev'])
+        print('running on files:')
+        for f in files:
+            print(f)
 
         # construct the command
         stats_cmd = [self.FASTQUTILS, 'stats']
@@ -194,16 +94,18 @@ class NGSUtils:
             cmd = stats_cmd
             cmd.append(f)
 
-            report += '============== '+ f + ' ==============\n'
-            print('running: '+' '.join(cmd))
+            report += '============== ' + f + ' ==============\n'
+            print('running: ' + ' '.join(cmd))
             p = subprocess.Popen(cmd,
-                        cwd = self.scratch,
-                        stdout = subprocess.PIPE, 
-                        stderr = subprocess.STDOUT, shell = False)
+                                 cwd=self.scratch,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT,
+                                 shell=False)
 
             while True:
                 line = p.stdout.readline()
-                if not line: break
+                if not line:
+                    break
                 report += line
                 print(line.replace('\n', ''))
 
@@ -212,34 +114,17 @@ class NGSUtils:
             report += "\n\n"
             print('return code: ' + str(p.returncode))
             if p.returncode != 0:
-                raise ValueError('Error running '+self.FASTQUTILS+', return code: '+str(p.returncode))
+                raise ValueError('Error running ' + self.FASTQUTILS + ', return code: ' + str(p.returncode))
 
 
         reportObj = {
-            'objects_created':[],
-            'text_message':report
+            'objects_created': [],
+            'text_message': report
         }
+        report = KBaseReport(self.callbackURL)
+        report_info = report.create({'report': reportObj, 'workspace_name': params['workspace_name']})
+        returnVal = {'report_name': report_info['name'], 'report_ref': report_info['ref']}
 
-        provenance = [{}]
-        if 'provenance' in ctx:
-            provenance = ctx['provenance']
-
-        reportName = 'ngsutils_stats_report_'+str(hex(uuid.getnode()))
-        report_obj_info = ws.save_objects({
-                'id':info[6],
-                'objects':[
-                    {
-                        'type':'KBaseReport.Report',
-                        'data':reportObj,
-                        'name':reportName,
-                        'meta':{},
-                        'hidden':1,
-                        'provenance':provenance
-                    }
-                ]
-            })[0]
-
-        returnVal = { 'report_name': reportName, 'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]) }
         #END fastqutils_stats
 
         # At some point might do deeper type checking...
@@ -247,4 +132,13 @@ class NGSUtils:
             raise ValueError('Method fastqutils_stats return value ' +
                              'returnVal is not type dict as required.')
         # return the results
+        return [returnVal]
+    def status(self, ctx):
+        #BEGIN_STATUS
+        returnVal = {'state': "OK",
+                     'message': "",
+                     'version': self.VERSION,
+                     'git_url': self.GIT_URL,
+                     'git_commit_hash': self.GIT_COMMIT_HASH}
+        #END_STATUS
         return [returnVal]
